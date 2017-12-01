@@ -116,18 +116,26 @@ export default class sysinfoComponent extends React.Component {
       this.state.wifiMACName = this.props.boardInfo.network.lan.macaddr.split(':')[3] + this.props.boardInfo.network.lan.macaddr.split(':')[4] + this.props.boardInfo.network.lan.macaddr.split(':')[5];
       this.state.mode = this.props.boardInfo.wifi.radio0.linkit_mode;
 
-      switch (this.state.mode) {
-      case 'ap':
-        this.state.currentIp = this.props.boardInfo.lan['ipv4-address'][0].address;
-        break;
-      case 'sta':
-        this.state.currentIp = this.props.boardInfo.wan['ipv4-address'][0].address;
-        break;
-      case 'apsta':
-        this.state.currentIp = this.props.boardInfo.lan['ipv4-address'][0].address;
-        break;
-      default:
-        break;
+      try {
+        this.state.currentIp = this.props.boardInfo.wan1['ipv4-address'][0].address;
+      } catch (e) {
+        switch (this.state.mode) {
+        case 'ap':
+          this.state.currentIp = this.props.boardInfo.lan['ipv4-address'][0].address;
+          break;
+        case 'sta':
+          try {
+            this.state.currentIp = this.props.boardInfo.wan['ipv4-address'][0].address;
+          } catch (e) {
+            this.state.currentIp = this.props.boardInfo.lan['ipv4-address'][0].address;
+          }
+          break;
+        case 'apsta':
+          this.state.currentIp = this.props.boardInfo.lan['ipv4-address'][0].address;
+          break;
+        default:
+          break;
+        }
       }
     }
 
